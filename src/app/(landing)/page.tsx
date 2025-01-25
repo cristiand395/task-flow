@@ -1,22 +1,6 @@
-import type { Metadata } from 'next'
 import Link from 'next/link';
 import { Medal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { siteConfig } from '../../../config/site';
-
-export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  icons: [
-    {
-      url: '/logo.svg',
-      href: '/logo.svg',
-    }
-  ],
-};
 
 export default function LandingPage() {
   return (

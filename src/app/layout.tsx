@@ -1,5 +1,8 @@
+import type { Metadata } from 'next'
 import { Cabin } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { siteConfig } from '../../config/site';
+
 import "./globals.css";
 
 const cabin = Cabin({
@@ -7,6 +10,20 @@ const cabin = Cabin({
   subsets: ["latin"],
   variable: '--font-cabin',
 });
+
+export const metadata: Metadata = {
+  title: {
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  icons: [
+    {
+      url: '/logo.svg',
+      href: '/logo.svg',
+    }
+  ],
+};
 
 export default function RootLayout({
   children,
