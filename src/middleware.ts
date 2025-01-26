@@ -1,6 +1,21 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+const isProtectedRoute = createRouteMatcher(['/organization(.*)'])
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, orgId, redirectToSignIn } = await auth();
+
+  if (!userId && isProtectedRoute(req)) {
+    // Add custom logic to run before redirecting
+    return redirectToSignIn();
+  } 
+  else if (userId && !orgId && isProtectedRoute(req) && req.nextUrl.pathname !== '/select-org') {
+    return NextResponse.redirect('/select-org');
+  }
+  
+});
+
 
 export const config = {
   matcher: [
