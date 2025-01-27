@@ -20,8 +20,8 @@ export default function Navbar() {
       <div className="ml-auto flex items-center gap-x-2">
         <OrganizationSwitcher
           hidePersonal
-          afterCreateOrganizationUrl="/organization/:id"
-          afterSelectOrganizationUrl="/organization/:id"
+          afterCreateOrganizationUrl="/organization/:slug"
+          afterSelectOrganizationUrl="/organization/:slug"
           afterLeaveOrganizationUrl="/select-org" />
       </div>
       <UserButton
