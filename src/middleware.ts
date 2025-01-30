@@ -1,50 +1,44 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher(['/organization(.*)'])
+const protectedRoutes = ['/organization(.*)', '/settings'];
+const isProtectedRoute = createRouteMatcher(protectedRoutes);
+
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, orgId, orgSlug, redirectToSignIn } = await auth();
-  console.log('userId', userId)
-  console.log('orgId', orgId)
-  console.log('orgSlug', orgSlug)
-  if (isProtectedRoute(req)) {
-    if (userId) {
-      if (orgId && (req.nextUrl.pathname !== '/select-org' || )) {
-        const orgUrl = new URL(`/organization/${orgSlug}`, req.url)
-        return NextResponse.redirect(orgUrl);
-      }
-      
-    }
-    else if (userId) {
-
-    }
-    else {
-      return redirectToSignIn();
-    }
-  }
-  if (isProtectedRoute(req) && userId && !orgId && req.nextUrl.pathname !== '/select-org') {
-    const orgSelection = new URL('/select-org', req.url)
-    return NextResponse.redirect(orgSelection);
-  }
-  else if (isProtectedRoute(req) && userId && orgId) {
+ 
+  const authURLs = ['/sign-in', '/sign-up']
+  if (!isProtectedRoute(req) && userId && orgId && (authURLs.includes(req.nextUrl.pathname))) {
     const orgUrl = new URL(`/organization/${orgSlug}`, req.url)
     return NextResponse.redirect(orgUrl);
   }
-  else if (!isProtectedRoute(req)) {
-    console.log(`${req.url} Es una ruta pública`)
-  }
-  else {
-    console.log('No cumple ninguna condición')
-  }
-});
 
+  if (isProtectedRoute(req) && userId && !orgId) {
+    const orgSelection = new URL('/select-org', req.url)
+    return NextResponse.redirect(orgSelection);
+  }
+
+  if (isProtectedRoute(req) && userId && orgId && orgSlug) {
+    const orgUrl = new URL(`/organization/${orgSlug}`, req.url);
+  
+    if (req.nextUrl.pathname !== `/organization/${orgSlug}`) {
+      return NextResponse.redirect(orgUrl);
+    }
+  }  
+  
+  if (isProtectedRoute(req) && !userId && !authURLs.includes(req.nextUrl.pathname)) {
+    return redirectToSignIn({
+      returnBackUrl: req.url,
+    });
+  }  
+});
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
+    // Excluir archivos estáticos y Next.js internals
+    '/((?!_next/static|_next/image|favicon.ico|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Aplicar middleware a API y TRPC
     '/(api|trpc)(.*)',
   ],
 };
