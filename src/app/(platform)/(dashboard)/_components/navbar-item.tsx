@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import {
@@ -32,11 +33,10 @@ export function NavbarItem({
   organization,
   onExpand
 }: NavbarItemProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const routes = [
     {
-      label: "Board",
+      label: "Boards",
       icon: <Layout className="h-4 w-4 mr-2" />,
       href: `/organization/${organization.slug}`
     },
@@ -56,9 +56,6 @@ export function NavbarItem({
       href: `/organization/${organization.slug}/settings`
     }
   ]
-  const onClick = (href: string) => {
-    router.push(href);
-  }
 
   return (
     <Accordion
@@ -91,19 +88,21 @@ export function NavbarItem({
         </AccordionTrigger>
         <AccordionContent className="pt-1 text-neutral-700">
           {routes.map((route) => (
-            <Button
-              key={route.label}
-              size="sm"
-              onClick={() => onClick(route.href)}
-              variant="ghost"
-              className={cn(
-                "w-full font-normal justify-start pl-10 mb-1",
-                pathname === route.href && "bg-sky-500/10 text-sky-700"
-              )}
-            >
-              {route.icon}
-              {route.label}
-            </Button>
+            <Link
+              key={route.href}
+              href={route.href}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className={cn(
+                  "w-full font-normal justify-start pl-10 mb-1",
+                  pathname === route.href && "bg-sky-500/10 text-sky-700"
+                )}
+              >
+                {route.icon}
+                {route.label}
+              </Button>
+            </Link>
           ))}
         </AccordionContent>
       </AccordionItem>

@@ -16,9 +16,9 @@ interface SidebarProps {
   storageKey?: string;
 }
 export default function Sidebar({
-  storageKey = "sidebar-open"
+  storageKey = "isSidebarOpen"
 }: SidebarProps) {
-  const [expanded, setExpanded] = useLocalStorage<Record<string, any>>(storageKey, {});
+  const [expandedStorage, setExpandedStorage] = useLocalStorage<Record<string, any>>(storageKey, {});
   const {
     organization: activeOrganization,
     isLoaded: isOrganizationLoaded
@@ -33,16 +33,17 @@ export default function Sidebar({
     }
   });
 
-  const defaultAccordionState: string[] = Object.keys(expanded)
-    .reduce((acc: string[], key) => {
-      if (expanded[key]) {
+
+  const defaultAccordionState: string[] = Object.keys(expandedStorage).reduce(
+    (acc: string[], key) => {
+      if (expandedStorage[key]) {
         acc.push(key);
       }
       return acc;
     }, []);
 
   const onExpand = (id: string) => {
-    setExpanded((current) => ({
+    setExpandedStorage((current) => ({
       ...current,
       [id]: !current[id]
     }));
@@ -55,12 +56,11 @@ export default function Sidebar({
       </>
     )
   }
-
   return (
     <>
       <div className="font-medium text-xs flex items-center mb-1">
-        <span className="pl-4">
-          Workspaces
+        <span className="pl-2 text-lg">
+          Organizations
         </span>
         <Button
           asChild
@@ -78,14 +78,15 @@ export default function Sidebar({
       <Accordion
         type="multiple"
         defaultValue={defaultAccordionState}
+        className="space-y-2"
       >
         {
           userMemberships.data.map(({ organization }) => (
             <NavbarItem
               key={organization.id}
               isActive={activeOrganization?.id === organization.id}
-              isExpanded={expanded[organization.id]}
-              organization={organization}
+              isExpanded={expandedStorage[organization.id]}
+              organization={organization as Organization}
               onExpand={onExpand}
             />
           ))

@@ -7,7 +7,7 @@ const isProtectedRoute = createRouteMatcher(protectedRoutes);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId, orgId, orgSlug, redirectToSignIn } = await auth();
- 
+
   const authURLs = ['/sign-in', '/sign-up']
   if (!isProtectedRoute(req) && userId && orgId && (authURLs.includes(req.nextUrl.pathname))) {
     const orgUrl = new URL(`/organization/${orgSlug}`, req.url)
@@ -19,19 +19,11 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(orgSelection);
   }
 
-  if (isProtectedRoute(req) && userId && orgId && orgSlug) {
-    const orgUrl = new URL(`/organization/${orgSlug}`, req.url);
-  
-    if (req.nextUrl.pathname !== `/organization/${orgSlug}`) {
-      return NextResponse.redirect(orgUrl);
-    }
-  }  
-  
   if (isProtectedRoute(req) && !userId && !authURLs.includes(req.nextUrl.pathname)) {
     return redirectToSignIn({
       returnBackUrl: req.url,
     });
-  }  
+  }
 });
 
 export const config = {
