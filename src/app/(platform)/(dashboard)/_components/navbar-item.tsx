@@ -12,6 +12,7 @@ import { Accordion, AccordionItem, AccordionContent, AccordionTrigger } from "@/
 import { cn } from "@/lib/utils";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export type Organization = {
   id: string;
@@ -108,4 +109,15 @@ export function NavbarItem({
       </AccordionItem>
     </Accordion>
   );
+}
+
+NavbarItem.Skeleton = function SkeletonNavItem() {
+  return (
+    <div className="flex items-center gap-x-2">
+      <div className="w-10 h-10 relative shrink-0">
+        <Skeleton className="h-full w-full absolute" />
+      </div>
+      <Skeleton className="h-10 w-full" />
+    </div>
+  )
 }
