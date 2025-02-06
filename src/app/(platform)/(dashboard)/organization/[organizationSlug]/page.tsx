@@ -1,7 +1,20 @@
-export default function OrganizationPage() {
+
+import { db } from "@/lib/db";
+import { Form } from "./form";
+import { Board } from "./board";
+
+export default async function OrganizationPage() {
+
+  const boards = await db.board.findMany()
+
   return (
     <div>
-      <h1>Organization Page</h1>
+      <Form />
+      {
+        boards.map((board) => (
+          <Board key={board.id} title={board.title} id={board.id} />
+        ))
+      }
     </div>
   );
 }
