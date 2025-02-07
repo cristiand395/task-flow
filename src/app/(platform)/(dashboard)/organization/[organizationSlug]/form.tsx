@@ -1,7 +1,8 @@
 "use client";
 import { create } from "@/actions/create-board";
-import { Button } from "@/components/ui/button";
 import { useFormState } from "react-dom";
+import { FormInput } from "./form-input";
+import { FormButton } from "./form-button";
 export function Form() {
 
   const initialState = { message: null, errors: {} }
@@ -9,14 +10,10 @@ export function Form() {
 
   return (
     <form action={dispatch}>
-      <input
-        id="title"
-        name="title"
-        placeholder="Enter a border title"
-        className="border-black border p-1"
-        required
-      />
-      <Button>Submit</Button>
+      <div className="flex flex-col space-y-2">
+        <FormInput errors={state.errors} />
+      </div>
+      <FormButton />
     </form>
   )
 }

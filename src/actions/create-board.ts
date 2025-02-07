@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { db } from "@/lib/db";
 
 export type State = {
   message?: string | null;
@@ -25,7 +25,7 @@ export async function create(prevState: State, formData: FormData) {
 
   if (!validatedFields.success) {
     return {
-      errors: validatedFields.error?.flatten().fieldErrors,
+      errors: validatedFields.error.flatten().fieldErrors,
       message: "Missing fields"
     }
   }
@@ -41,7 +41,7 @@ export async function create(prevState: State, formData: FormData) {
 
   } catch (error) {
     return {
-      message: `Data Error: ${error}`
+      message: "Error trying to create board"
     }
   }
 
